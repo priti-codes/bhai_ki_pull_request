@@ -14,7 +14,7 @@ interface IndexProps {
   onUpdateCart: (items: Product[]) => void;
 }
 
-const page = ({ cartItems, onUpdateCart }: IndexProps) => {
+const Index = ({ cartItems, onUpdateCart }: IndexProps) => {
   const [sectionOrder, setSectionOrder] = useState(categories);
   const [searchResults, setSearchResults] = useState<Product[] | null>(null);
   const { toast } = useToast();
@@ -189,4 +189,4 @@ const page = ({ cartItems, onUpdateCart }: IndexProps) => {
   );
 };
 
-export default page;
+export default Index;
