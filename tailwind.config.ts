@@ -68,6 +68,7 @@ export default {
 				'mint-green': 'hsl(var(--mint-green))',
 				'baby-pink': 'hsl(var(--baby-pink))',
 				'soft-yellow': 'hsl(var(--soft-yellow))',
+				'soft-purple': 'hsl(var(--soft-purple))',
 				'orange-cta': 'hsl(var(--orange-cta))'
 			},
 			backgroundImage: {

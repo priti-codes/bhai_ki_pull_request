@@ -26,9 +26,8 @@ export function Header({ onSearch, cartCount = 0 }: HeaderProps) {
             className="flex items-center gap-2"
           >
             <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              FirstCry
+              <img src="/logo.png" alt="FirstCry Logo" className='w-32 h-10' />
             </div>
-            <div className="text-lg">👶</div>
           </motion.div>
 
           {/* Desktop Navigation */}
