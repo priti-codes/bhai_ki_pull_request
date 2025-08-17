@@ -72,7 +72,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text h-20 text-transparent mb-4">
             Everything for Your Little One
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

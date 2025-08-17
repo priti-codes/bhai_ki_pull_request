@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { BuyNowModal } from './BuyNowModal';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
-import { Product, searchProducts } from '@/data/products';
+import { Product, searchProducts, demoProducts } from '@/data/products';
 import Groq from 'groq-sdk';
 
 interface ChatMessage {
@@ -26,7 +26,7 @@ interface ChatMessage {
 const initialMessages: ChatMessage[] = [
   {
     id: '1',
-    text: "Hi! 👶 I'm your FirstCry AI assistant! I can help you with:\n\n🛍️ Finding Products: Order me Horlicks Growth+\n❓ Answering Questions: How to feed my baby?\n💡 Giving Tips: Baby sleep tips\n\nWhat can I help you with today?",
+    text: "Hi! 👶 I'm your FirstCry AI assistant! I can help you with:\n\n🛍️ **Smart Product Search:**\n• 'T-shirt for age 5 years, price Rs 500, rating 4+'\n• 'Baby food under ₹300 with 4+ rating'\n• 'Dress for 2-year-old budget ₹600'\n\n❓ **Baby Care Questions:**\n• 'How to feed my baby?'\n• 'Baby sleep tips'\n\n💡 **Filter Options:**\n• Age (0-8 years)\n• Price range (₹100-₹2000)\n• Rating (1-5 stars)\n• Product type (clothes, food, toys)\n\nWhat can I help you with today?",
     isBot: true,
     timestamp: new Date()
   }
@@ -47,6 +47,146 @@ export function FloatingChatbot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+// Extract filter criteria from user message
+interface FilterCriteria {
+  category?: string;
+  maxPrice?: number;
+  minPrice?: number;
+  minRating?: number;
+  ageRange?: string;
+  keywords?: string[];
+}
+
+const extractFilters = (message: string): FilterCriteria => {
+  const lowerMessage = message.toLowerCase();
+  const filters: FilterCriteria = {};
+
+  // Extract price range
+  const priceMatches = lowerMessage.match(/(?:price|cost|budget).*?(?:rs\.?|₹)\s*(\d+)/i);
+  if (priceMatches) {
+    filters.maxPrice = parseInt(priceMatches[1]);
+  }
+
+  // Extract minimum price
+  const minPriceMatches = lowerMessage.match(/(?:above|over|minimum).*?(?:rs\.?|₹)\s*(\d+)/i);
+  if (minPriceMatches) {
+    filters.minPrice = parseInt(minPriceMatches[1]);
+  }
+
+  // Extract rating
+  const ratingMatches = lowerMessage.match(/rating\s*(\d+(?:\.\d+)?)\+?/i);
+  if (ratingMatches) {
+    filters.minRating = parseFloat(ratingMatches[1]);
+  }
+
+  // Extract age
+  const ageMatches = lowerMessage.match(/age\s*(\d+)(?:\s*(?:years?|y|months?|m))?/i);
+  if (ageMatches) {
+    const age = parseInt(ageMatches[1]);
+    // Map age to age ranges
+    if (age === 0) filters.ageRange = '0-6m';
+    else if (age <= 1) filters.ageRange = '0-18m';
+    else if (age <= 2) filters.ageRange = '1-3y';
+    else if (age <= 5) filters.ageRange = '2-6y';
+    else if (age <= 8) filters.ageRange = '5-8y';
+  }
+
+  // Extract product category/type
+  if (lowerMessage.includes('t-shirt') || lowerMessage.includes('tshirt')) {
+    filters.category = 'baby-casuals';
+    filters.keywords = ['t-shirt', 'shirt'];
+  } else if (lowerMessage.includes('dress')) {
+    filters.category = 'baby-casuals';
+    filters.keywords = ['dress'];
+  } else if (lowerMessage.includes('food') || lowerMessage.includes('cereal') || lowerMessage.includes('formula')) {
+    filters.category = 'baby-food';
+  } else if (lowerMessage.includes('traditional') || lowerMessage.includes('ethnic')) {
+    filters.category = 'baby-traditionals';
+  }
+
+  return filters;
+};
+
+const ageRangeMatches = (productAge: string, requestedAge: string): boolean => {
+  // Convert age ranges to comparable numbers for overlap checking
+  const parseAge = (age: string) => {
+    if (age.includes('m')) return parseInt(age) / 12; // Convert months to years
+    if (age.includes('y')) return parseInt(age);
+    return 0;
+  };
+
+  const getAgeRange = (ageStr: string) => {
+    const parts = ageStr.split('-');
+    return {
+      min: parseAge(parts[0]),
+      max: parseAge(parts[1])
+    };
+  };
+
+  const productRange = getAgeRange(productAge);
+  const requestedRange = getAgeRange(requestedAge);
+
+  // Check if ranges overlap
+  return productRange.min <= requestedRange.max && productRange.max >= requestedRange.min;
+};
+
+const searchProductsWithFilters = (query: string, filters: FilterCriteria): Product[] => {
+  let allProducts: Product[] = [];
+  
+  // Get all products from all categories or specific category
+  if (filters.category) {
+    allProducts = demoProducts[filters.category] || [];
+  } else {
+    allProducts = Object.values(demoProducts).flat();
+  }
+
+  let filteredProducts = allProducts;
+
+  // Apply keyword filter
+  if (filters.keywords && filters.keywords.length > 0) {
+    filteredProducts = filteredProducts.filter(product =>
+      filters.keywords!.some(keyword =>
+        product.name.toLowerCase().includes(keyword.toLowerCase())
+      )
+    );
+  } else {
+    // Use existing search if no specific keywords
+    const searchResults = searchProducts(query);
+    if (searchResults.length > 0) {
+      filteredProducts = searchResults;
+    }
+  }
+
+  // Apply price filters
+  if (filters.maxPrice) {
+    filteredProducts = filteredProducts.filter(product => product.price <= filters.maxPrice!);
+  }
+  if (filters.minPrice) {
+    filteredProducts = filteredProducts.filter(product => product.price >= filters.minPrice!);
+  }
+
+  // Apply rating filter
+  if (filters.minRating) {
+    filteredProducts = filteredProducts.filter(product => 
+      (product.rating || 0) >= filters.minRating!
+    );
+  }
+
+  // Apply age range filter
+  if (filters.ageRange) {
+    filteredProducts = filteredProducts.filter(product => 
+      product.ageRange && ageRangeMatches(product.ageRange, filters.ageRange!)
+    );
+  }
+
+  // Sort by rating (highest first), then by popularity
+  return filteredProducts.sort((a, b) => {
+    if (a.isPopular && !b.isPopular) return -1;
+    if (!a.isPopular && b.isPopular) return 1;
+    return (b.rating || 0) - (a.rating || 0);
+  });
+};
 
 const extractKeywords = (text: string): string[] => {
   // Remove common words and extract meaningful keywords
@@ -86,10 +226,17 @@ const extractKeywords = (text: string): string[] => {
   };
 
   const getGroqResponse = async (userMessage: string): Promise<string> => {
-    // Check if it's a product search first
+    // Check if it's a product search first - enhanced detection
     const lowerMessage = userMessage.toLowerCase();
-    if (lowerMessage.includes('order') || lowerMessage.includes('buy') || lowerMessage.includes('find') || 
-        lowerMessage.includes('show') || lowerMessage.includes('get me') || lowerMessage.includes('search')) {
+    const productKeywords = ['order', 'buy', 'find', 'show', 'get me', 'search', 'want', 'need', 'looking for'];
+    const filterKeywords = ['price', 'rating', 'age', 'years', 'rs', '₹', 'budget', 'cost'];
+    const productTypes = ['t-shirt', 'shirt', 'dress', 'clothes', 'food', 'formula', 'diaper', 'toy'];
+    
+    const hasProductKeyword = productKeywords.some(keyword => lowerMessage.includes(keyword));
+    const hasFilterKeyword = filterKeywords.some(keyword => lowerMessage.includes(keyword));
+    const hasProductType = productTypes.some(type => lowerMessage.includes(type));
+    
+    if (hasProductKeyword || hasFilterKeyword || hasProductType) {
       return "PRODUCT_SEARCH_NEEDED";
     }
 
@@ -207,14 +354,25 @@ const extractKeywords = (text: string): string[] => {
       const aiResponse = await getGroqResponse(userQuery);
 
       if (aiResponse === "PRODUCT_SEARCH_NEEDED") {
-        // Handle product search
-        const foundProducts = searchForProducts(userQuery);
+        // Handle product search with filters
+        const filters = extractFilters(userQuery);
+        const foundProducts = searchProductsWithFilters(userQuery, filters);
 
         if (foundProducts.length > 0) {
           const displayedProducts = foundProducts.slice(0, 3);
+          
+          // Create a more detailed response based on filters
+          let responseText = `Great! I found ${foundProducts.length} product${foundProducts.length > 1 ? 's' : ''} matching your criteria:`;
+          
+          if (filters.maxPrice) responseText += `\n💰 Under ₹${filters.maxPrice}`;
+          if (filters.minRating) responseText += `\n⭐ Rating ${filters.minRating}+ stars`;
+          if (filters.ageRange) responseText += `\n👶 Age: ${filters.ageRange}`;
+          
+          responseText += `\n\nHere are the top-rated ones:`;
+          
           const botResponse: ChatMessage = {
             id: (Date.now() + 1).toString(),
-            text: `Great! I found ${foundProducts.length} product${foundProducts.length > 1 ? 's' : ''} for you. Here are the top-rated ones:`,
+            text: responseText,
             isBot: true,
             timestamp: new Date(),
             products: displayedProducts,
@@ -224,9 +382,20 @@ const extractKeywords = (text: string): string[] => {
           };
           setMessages(prev => [...prev, botResponse]);
         } else {
+          let noResultsText = "Sorry, I couldn't find products matching your criteria. ";
+          
+          if (filters.maxPrice || filters.minRating || filters.ageRange) {
+            noResultsText += "Try adjusting your filters:\n";
+            if (filters.maxPrice) noResultsText += `• Increase budget from ₹${filters.maxPrice}\n`;
+            if (filters.minRating) noResultsText += `• Lower rating requirement from ${filters.minRating}+\n`;
+            if (filters.ageRange) noResultsText += `• Try different age range\n`;
+          } else {
+            noResultsText += "Try different keywords like 'diaper', 'food', 'clothes', or 'toys'. 😊";
+          }
+          
           const botResponse: ChatMessage = {
             id: (Date.now() + 1).toString(),
-            text: "Sorry, I couldn't find that product. Try again with different keywords like 'diaper', 'food', 'clothes', or 'toys'. 😊",
+            text: noResultsText,
             isBot: true,
             timestamp: new Date()
           };
@@ -347,22 +516,38 @@ const extractKeywords = (text: string): string[] => {
                                 className="bg-white border-2 border-purple-100 rounded-xl p-3 shadow-md"
                               >
                                 <div className="flex gap-3">
-                                  <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                                  />
+                                  <div className="relative w-16 h-16 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    {product.emoji ? (
+                                      <span className="text-2xl">{product.emoji}</span>
+                                    ) : (
+                                      <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-full h-full object-cover rounded-lg"
+                                      />
+                                    )}
+                                    {product.isPopular && (
+                                      <Badge className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs px-1 py-0.5">
+                                        ⭐
+                                      </Badge>
+                                    )}
+                                  </div>
                                   <div className="flex-1 min-w-0">
                                     <h4 className="font-semibold text-sm text-gray-800 line-clamp-2">
                                       {product.name}
                                     </h4>
-                                    <div className="flex items-center gap-1 mt-1">
+                                    <div className="flex items-center gap-2 mt-1">
                                       <div className="flex items-center">
                                         <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                                         <span className="text-xs text-gray-600 ml-1">
                                           {product.rating || 4.0}
                                         </span>
                                       </div>
+                                      {product.ageRange && (
+                                        <Badge variant="outline" className="text-xs py-0 px-1 border-purple-200 text-purple-600">
+                                          👶 {product.ageRange}
+                                        </Badge>
+                                      )}
                                       {product.badge && (
                                         <Badge variant="secondary" className="text-xs py-0 px-1">
                                           {product.badge}
