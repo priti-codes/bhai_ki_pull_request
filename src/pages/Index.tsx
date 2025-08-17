@@ -13,6 +13,7 @@ import { useCart } from '@/contexts/CartContext';
 const Index = () => {
   const [sectionOrder, setSectionOrder] = useState(categories);
   const [searchResults, setSearchResults] = useState<Product[] | null>(null);
+  const [activeRecommendationId, setActiveRecommendationId] = useState<string | null>(null);
   const { toast } = useToast();
   const { addToCart, cartCount } = useCart();
 
@@ -37,6 +38,14 @@ const Index = () => {
       description: `${product.name} has been added to your cart.`
     });
   }, [addToCart, toast]);
+
+  const handleRecommendationToggle = useCallback((productId: string, show: boolean) => {
+    if (show) {
+      setActiveRecommendationId(productId);
+    } else {
+      setActiveRecommendationId(null);
+    }
+  }, []);
 
   const handleSearch = useCallback((query: string) => {
     if (query.trim()) {
@@ -102,6 +111,8 @@ const Index = () => {
                   key={product.id}
                   product={product}
                   onAddToCart={handleAddToCart}
+                  showRecommendations={activeRecommendationId === product.id}
+                  onRecommendationToggle={handleRecommendationToggle}
                 />
               ))}
             </div>
@@ -165,6 +176,8 @@ const Index = () => {
                                 tagline={category.tagline}
                                 dragHandleProps={provided.dragHandleProps}
                                 onAddToCart={handleAddToCart}
+                                activeRecommendationId={activeRecommendationId}
+                                onRecommendationToggle={handleRecommendationToggle}
                               />
                             </div>
                           )}

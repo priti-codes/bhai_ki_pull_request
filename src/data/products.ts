@@ -130,3 +130,74 @@ export const searchProducts = (query: string): Product[] => {
     product.badge?.toLowerCase().includes(lowerQuery)
   );
 };
+
+export const getRecommendations = (product: Product, limit: number = 4): Product[] => {
+  const allProducts = getAllProducts();
+  
+  // Filter out the current product
+  const otherProducts = allProducts.filter(p => p.id !== product.id);
+  
+  // Score products based on relevance
+  const scoredProducts = otherProducts.map(p => {
+    let score = 0;
+    
+    // Same category gets highest score
+    if (p.category === product.category) score += 10;
+    
+    // Same age range gets high score
+    if (p.ageRange === product.ageRange) score += 8;
+    
+    // Popular products get bonus
+    if (p.isPopular) score += 3;
+    
+    // High rating gets bonus
+    if (p.rating && p.rating >= 4.5) score += 2;
+    
+    // Similar price range (within 50% difference)
+    if (p.price && product.price) {
+      const priceDiff = Math.abs(p.price - product.price) / product.price;
+      if (priceDiff <= 0.5) score += 5;
+      else if (priceDiff <= 1.0) score += 2;
+    }
+    
+    // Complementary products based on keywords
+    const productKeywords = product.name.toLowerCase().split(' ');
+    const candidateKeywords = p.name.toLowerCase().split(' ');
+    
+    // Baby food recommendations
+    if (productKeywords.some(k => ['food', 'cerelac', 'formula'].includes(k))) {
+      if (candidateKeywords.some(k => ['bottle', 'bib', 'bowl', 'spoon', 'feeding'].includes(k))) {
+        score += 6;
+      }
+    }
+    
+    // Diaper recommendations
+    if (productKeywords.some(k => ['diaper', 'nappy'].includes(k))) {
+      if (candidateKeywords.some(k => ['wipes', 'cream', 'powder', 'lotion', 'rash'].includes(k))) {
+        score += 6;
+      }
+    }
+    
+    // Clothing recommendations
+    if (productKeywords.some(k => ['dress', 'shirt', 'onesie', 'romper', 'clothing'].includes(k))) {
+      if (candidateKeywords.some(k => ['socks', 'hat', 'bib', 'shoes', 'mittens'].includes(k))) {
+        score += 6;
+      }
+    }
+    
+    // Toy recommendations
+    if (productKeywords.some(k => ['toy', 'bear', 'blocks', 'rattle'].includes(k))) {
+      if (candidateKeywords.some(k => ['toy', 'play', 'educational', 'activity', 'book'].includes(k))) {
+        score += 4;
+      }
+    }
+    
+    return { product: p, score };
+  });
+  
+  // Sort by score and return top recommendations
+  return scoredProducts
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(item => item.product);
+};

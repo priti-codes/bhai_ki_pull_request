@@ -302,7 +302,7 @@ export function CartPage() {
                               <div className="flex items-center justify-between mb-2">
                                 <Label htmlFor={`subscription-${item.id}`} className="text-sm font-medium flex items-center gap-2">
                                   <RefreshCw className="w-4 h-4 text-purple-600" />
-                                  Auto-Buy Subscription
+                                  Subscribe and Save
                                 </Label>
                                 <Switch
                                   id={`subscription-${item.id}`}
