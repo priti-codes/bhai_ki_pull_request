@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { motion } from 'framer-motion';
 import { Header } from '@/components/Header';
 import { DraggableSection } from '@/components/DraggableSection';
@@ -8,18 +8,15 @@ import { FloatingChatbot } from '@/components/FloatingChatbot';
 import { ProductCard } from '@/components/ProductCard';
 import { demoProducts, categories, searchProducts, Product } from '@/data/products';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
-interface IndexProps {
-  cartItems: Product[];
-  onUpdateCart: (items: Product[]) => void;
-}
-
-const Index = ({ cartItems, onUpdateCart }: IndexProps) => {
+const Index = () => {
   const [sectionOrder, setSectionOrder] = useState(categories);
   const [searchResults, setSearchResults] = useState<Product[] | null>(null);
   const { toast } = useToast();
+  const { addToCart, cartCount } = useCart();
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const items = Array.from(sectionOrder);
@@ -34,13 +31,12 @@ const Index = ({ cartItems, onUpdateCart }: IndexProps) => {
   };
 
   const handleAddToCart = useCallback((product: Product) => {
-    const updatedCart = [...cartItems, product];
-    onUpdateCart(updatedCart);
+    addToCart(product);
     toast({
       title: "Added to cart! 🛒",
       description: `${product.name} has been added to your cart.`
     });
-  }, [cartItems, onUpdateCart, toast]);
+  }, [addToCart, toast]);
 
   const handleSearch = useCallback((query: string) => {
     if (query.trim()) {
@@ -67,7 +63,7 @@ const Index = ({ cartItems, onUpdateCart }: IndexProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onSearch={handleSearch} cartCount={cartItems.length} />
+      <Header onSearch={handleSearch} cartCount={cartCount} />
       
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}

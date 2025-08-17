@@ -8,7 +8,7 @@ interface DraggableSectionProps {
   products: Product[];
   color: string;
   tagline: string;
-  dragHandleProps?: any;
+  dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
   onAddToCart?: (product: Product) => void;
 }
 
