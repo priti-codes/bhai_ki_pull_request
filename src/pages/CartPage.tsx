@@ -9,20 +9,17 @@ import { Separator } from '@/components/ui/separator';
 import { Product } from '@/data/products';
 import { BuyNowModal } from '@/components/BuyNowModal';
 import { useToast } from '@/hooks/use-toast';
+import { useCart } from '@/contexts/CartContext';
 
 interface CartItem extends Product {
   quantity: number;
 }
 
-interface CartPageProps {
-  cartItems: Product[];
-  onUpdateCart: (items: Product[]) => void;
-}
-
-export function CartPage({ cartItems, onUpdateCart }: CartPageProps) {
+export function CartPage() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutProduct, setCheckoutProduct] = useState<Product | null>(null);
   const { toast } = useToast();
+  const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
 
   // Group cart items by ID and calculate quantities
   const groupedItems = cartItems.reduce((acc, item) => {
@@ -41,15 +38,24 @@ export function CartPage({ cartItems, onUpdateCart }: CartPageProps) {
       return;
     }
 
-    const updatedCart: Product[] = [];
-    groupedItems.forEach(item => {
-      const quantity = item.id === productId ? newQuantity : item.quantity;
-      for (let i = 0; i < quantity; i++) {
-        updatedCart.push(item);
-      }
-    });
+    // Find current quantity
+    const currentQuantity = groupedItems.find(item => item.id === productId)?.quantity || 0;
+    const product = cartItems.find(item => item.id === productId);
     
-    onUpdateCart(updatedCart);
+    if (!product) return;
+
+    if (newQuantity > currentQuantity) {
+      // Add more items
+      for (let i = 0; i < newQuantity - currentQuantity; i++) {
+        addToCart(product);
+      }
+    } else {
+      // Remove some items
+      for (let i = 0; i < currentQuantity - newQuantity; i++) {
+        removeFromCart(productId);
+      }
+    }
+    
     toast({
       title: "Cart updated! 🛒",
       description: "Quantity has been updated."
@@ -57,16 +63,19 @@ export function CartPage({ cartItems, onUpdateCart }: CartPageProps) {
   };
 
   const removeItem = (productId: string) => {
-    const updatedCart = cartItems.filter(item => item.id !== productId);
-    onUpdateCart(updatedCart);
+    // Remove all instances of this product
+    const itemCount = cartItems.filter(item => item.id === productId).length;
+    for (let i = 0; i < itemCount; i++) {
+      removeFromCart(productId);
+    }
     toast({
       title: "Item removed! 🗑️",
       description: "Product has been removed from your cart."
     });
   };
 
-  const clearCart = () => {
-    onUpdateCart([]);
+  const handleClearCart = () => {
+    clearCart();
     toast({
       title: "Cart cleared! 🧹",
       description: "All items have been removed from your cart."
@@ -159,7 +168,7 @@ export function CartPage({ cartItems, onUpdateCart }: CartPageProps) {
           
           <Button 
             variant="outline" 
-            onClick={clearCart}
+            onClick={handleClearCart}
             className="text-destructive hover:text-destructive"
           >
             <Trash2 className="w-4 h-4 mr-2" />
