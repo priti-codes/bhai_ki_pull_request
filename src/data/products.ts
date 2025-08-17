@@ -9,6 +9,9 @@ export interface Product {
   description?: string;
   rating?: number;
   reviews?: number;
+  emoji?: string;
+  ageRange?: string; // e.g., "0-6m", "6-12m", "1-2y", "2-5y", "5-8y"
+  isPopular?: boolean;
 }
 
 export const categories = [
@@ -24,28 +27,28 @@ export const categories = [
 
 export const demoProducts: Record<string, Product[]> = {
   'baby-food': [
-    { id: 'bf1', name: 'Nestlé Cerelac Wheat Apple', price: 299, originalPrice: 349, image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=300', category: 'baby-food', badge: 'Best Seller', rating: 4.5, reviews: 1240 },
-    { id: 'bf2', name: 'Gerber Puffs Banana', price: 199, image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=300', category: 'baby-food', badge: 'Organic', rating: 4.3, reviews: 890 },
-    { id: 'bf3', name: 'Horlicks Growth+ Vanilla', price: 459, originalPrice: 520, image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300', category: 'baby-food', badge: 'Doctor Recommended', rating: 4.6, reviews: 2100 },
-    { id: 'bf4', name: 'Similac Gold Formula', price: 1299, image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=300', category: 'baby-food', badge: 'Premium', rating: 4.4, reviews: 567 },
-    { id: 'bf5', name: 'Heinz Baby Rice Cereal', price: 245, image: 'https://images.unsplash.com/photo-1628773822503-930a7eaecf80?w=300', category: 'baby-food', rating: 4.2, reviews: 432 },
-    { id: 'bf6', name: 'Aptamil Pronutra Stage 1', price: 890, originalPrice: 950, image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=300', category: 'baby-food', badge: 'Trending', rating: 4.5, reviews: 789 },
-    { id: 'bf7', name: 'Farex Baby Food Mix Fruit', price: 320, image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=300', category: 'baby-food', rating: 4.1, reviews: 623 },
-    { id: 'bf8', name: 'Nestum 3 Fruits Cereal', price: 275, image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300', category: 'baby-food', badge: 'New', rating: 4.3, reviews: 345 },
-    { id: 'bf9', name: 'Lactogen 1 Infant Formula', price: 679, originalPrice: 720, image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=300', category: 'baby-food', badge: 'Best Seller', rating: 4.4, reviews: 1120 },
-    { id: 'bf10', name: 'Pediasure Vanilla Delight', price: 1050, image: 'https://images.unsplash.com/photo-1628773822503-930a7eaecf80?w=300', category: 'baby-food', badge: 'Doctor Recommended', rating: 4.7, reviews: 890 }
+    { id: 'bf1', name: 'Nestlé Cerelac Wheat Apple', price: 299, originalPrice: 349, image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=300', category: 'baby-food', badge: 'Best Seller', rating: 4.5, reviews: 1240, emoji: '🍎', ageRange: '6-12m', isPopular: true },
+    { id: 'bf2', name: 'Gerber Puffs Banana', price: 199, image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=300', category: 'baby-food', badge: 'Organic', rating: 4.3, reviews: 890, emoji: '🍌', ageRange: '8-18m' },
+    { id: 'bf3', name: 'Horlicks Growth+ Vanilla', price: 459, originalPrice: 520, image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300', category: 'baby-food', badge: 'Doctor Recommended', rating: 4.6, reviews: 2100, emoji: '🥛', ageRange: '2-5y', isPopular: true },
+    { id: 'bf4', name: 'Similac Gold Formula', price: 1299, image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=300', category: 'baby-food', badge: 'Premium', rating: 4.4, reviews: 567, emoji: '🍼', ageRange: '0-6m' },
+    { id: 'bf5', name: 'Heinz Baby Rice Cereal', price: 245, image: 'https://images.unsplash.com/photo-1628773822503-930a7eaecf80?w=300', category: 'baby-food', rating: 4.2, reviews: 432, emoji: '🍚', ageRange: '4-12m' },
+    { id: 'bf6', name: 'Aptamil Pronutra Stage 1', price: 890, originalPrice: 950, image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=300', category: 'baby-food', badge: 'Trending', rating: 4.5, reviews: 789, emoji: '🍼', ageRange: '0-6m' },
+    { id: 'bf7', name: 'Farex Baby Food Mix Fruit', price: 320, image: 'https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=300', category: 'baby-food', rating: 4.1, reviews: 623, emoji: '🍓', ageRange: '6-18m' },
+    { id: 'bf8', name: 'Nestum 3 Fruits Cereal', price: 275, image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300', category: 'baby-food', badge: 'New', rating: 4.3, reviews: 345, emoji: '🥣', ageRange: '8-24m' },
+    { id: 'bf9', name: 'Lactogen 1 Infant Formula', price: 679, originalPrice: 720, image: 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=300', category: 'baby-food', badge: 'Best Seller', rating: 4.4, reviews: 1120, emoji: '🍼', ageRange: '0-6m', isPopular: true },
+    { id: 'bf10', name: 'Pediasure Vanilla Delight', price: 1050, image: 'https://images.unsplash.com/photo-1628773822503-930a7eaecf80?w=300', category: 'baby-food', badge: 'Doctor Recommended', rating: 4.7, reviews: 890, emoji: '🥛', ageRange: '2-8y', isPopular: true }
   ],
   'baby-casuals': [
-    { id: 'bc1', name: 'Cotton Romper - Blue Stars', price: 499, originalPrice: 699, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Best Seller', rating: 4.6, reviews: 834 },
-    { id: 'bc2', name: 'Cartoon T-shirt Mickey', price: 299, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Trending', rating: 4.4, reviews: 567 },
-    { id: 'bc3', name: 'Denim Dungaree Set', price: 899, originalPrice: 1199, image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=300', category: 'baby-casuals', badge: 'New Arrival', rating: 4.5, reviews: 423 },
-    { id: 'bc4', name: 'Striped Polo Shirt', price: 399, image: 'https://images.unsplash.com/photo-1520096515318-9df1b6ea5f45?w=300', category: 'baby-casuals', rating: 4.2, reviews: 234 },
-    { id: 'bc5', name: 'Cute Animal Onesie', price: 549, originalPrice: 649, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Organic Cotton', rating: 4.7, reviews: 789 },
-    { id: 'bc6', name: 'Rainbow Dress', price: 699, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Party Wear', rating: 4.3, reviews: 456 },
-    { id: 'bc7', name: 'Superhero Cape Set', price: 799, image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=300', category: 'baby-casuals', badge: 'Trending', rating: 4.6, reviews: 623 },
-    { id: 'bc8', name: 'Floral Summer Shorts', price: 349, originalPrice: 449, image: 'https://images.unsplash.com/photo-1520096515318-9df1b6ea5f45?w=300', category: 'baby-casuals', rating: 4.1, reviews: 345 },
-    { id: 'bc9', name: 'Space Print Pajama Set', price: 599, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Night Wear', rating: 4.4, reviews: 567 },
-    { id: 'bc10', name: 'Bunny Ear Hoodie', price: 799, originalPrice: 899, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Winter Special', rating: 4.5, reviews: 678 }
+    { id: 'bc1', name: 'Cotton Romper - Blue Stars', price: 499, originalPrice: 699, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Best Seller', rating: 4.6, reviews: 834, emoji: '👕', ageRange: '0-12m', isPopular: true },
+    { id: 'bc2', name: 'Cartoon T-shirt Mickey', price: 299, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Trending', rating: 4.4, reviews: 567, emoji: '👕', ageRange: '2-5y' },
+    { id: 'bc3', name: 'Denim Dungaree Set', price: 899, originalPrice: 1199, image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=300', category: 'baby-casuals', badge: 'New Arrival', rating: 4.5, reviews: 423, emoji: '👖', ageRange: '1-3y' },
+    { id: 'bc4', name: 'Striped Polo Shirt', price: 399, image: 'https://images.unsplash.com/photo-1520096515318-9df1b6ea5f45?w=300', category: 'baby-casuals', rating: 4.2, reviews: 234, emoji: '👕', ageRange: '3-6y' },
+    { id: 'bc5', name: 'Cute Animal Onesie', price: 549, originalPrice: 649, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Organic Cotton', rating: 4.7, reviews: 789, emoji: '👶', ageRange: '0-18m', isPopular: true },
+    { id: 'bc6', name: 'Rainbow Dress', price: 699, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Party Wear', rating: 4.3, reviews: 456, emoji: '👗', ageRange: '2-6y' },
+    { id: 'bc7', name: 'Superhero Cape Set', price: 799, image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=300', category: 'baby-casuals', badge: 'Trending', rating: 4.6, reviews: 623, emoji: '🦸', ageRange: '3-8y' },
+    { id: 'bc8', name: 'Floral Summer Shorts', price: 349, originalPrice: 449, image: 'https://images.unsplash.com/photo-1520096515318-9df1b6ea5f45?w=300', category: 'baby-casuals', rating: 4.1, reviews: 345, emoji: '🩳', ageRange: '2-5y' },
+    { id: 'bc9', name: 'Space Print Pajama Set', price: 599, image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=300', category: 'baby-casuals', badge: 'Night Wear', rating: 4.4, reviews: 567, emoji: '🌙', ageRange: '1-4y' },
+    { id: 'bc10', name: 'Bunny Ear Hoodie', price: 799, originalPrice: 899, image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300', category: 'baby-casuals', badge: 'Winter Special', rating: 4.5, reviews: 678, emoji: '🐰', ageRange: '1-5y' }
   ],
   'baby-traditionals': [
     { id: 'bt1', name: 'Kurta Pajama Set - Golden', price: 899, originalPrice: 1199, image: 'https://images.unsplash.com/photo-1594736797933-d0cc4bf10115?w=300', category: 'baby-traditionals', badge: 'Festival Special', rating: 4.5, reviews: 432 },
