@@ -92,7 +92,7 @@ const extractFilters = (message: string): FilterCriteria => {
     else if (age <= 8) filters.ageRange = '5-8y';
   }
 
-  // Extract product category/type
+  // Extract product category/type and specific brands/products
   if (lowerMessage.includes('t-shirt') || lowerMessage.includes('tshirt')) {
     filters.category = 'baby-casuals';
     filters.keywords = ['t-shirt', 'shirt'];
@@ -103,6 +103,32 @@ const extractFilters = (message: string): FilterCriteria => {
     filters.category = 'baby-food';
   } else if (lowerMessage.includes('traditional') || lowerMessage.includes('ethnic')) {
     filters.category = 'baby-traditionals';
+  }
+  
+  // Specific brand/product name detection
+  const brandNames = ['horlicks', 'cerelac', 'gerber', 'similac', 'aptamil', 'farex', 'nestum', 'lactogen', 'pediasure', 'heinz'];
+  const productNames = ['romper', 'onesie', 'diaper', 'wipes', 'formula', 'cereal', 'puffs'];
+  
+  // Check for specific brands
+  for (const brand of brandNames) {
+    if (lowerMessage.includes(brand)) {
+      filters.keywords = filters.keywords || [];
+      filters.keywords.push(brand);
+      // Set appropriate category for known brands
+      if (['horlicks', 'cerelac', 'gerber', 'similac', 'aptamil', 'farex', 'nestum', 'lactogen', 'pediasure', 'heinz'].includes(brand)) {
+        filters.category = 'baby-food';
+      }
+      break;
+    }
+  }
+  
+  // Check for specific product types
+  for (const product of productNames) {
+    if (lowerMessage.includes(product)) {
+      filters.keywords = filters.keywords || [];
+      filters.keywords.push(product);
+      break;
+    }
   }
 
   return filters;
@@ -226,21 +252,38 @@ const extractKeywords = (text: string): string[] => {
   };
 
   const getGroqResponse = async (userMessage: string): Promise<string> => {
-    // Check if it's a product search first - enhanced detection
+    // Enhanced logic to distinguish between product search and general questions
     const lowerMessage = userMessage.toLowerCase();
-    const productKeywords = ['order', 'buy', 'find', 'show', 'get me', 'search', 'want', 'need', 'looking for'];
-    const filterKeywords = ['price', 'rating', 'age', 'years', 'rs', '₹', 'budget', 'cost'];
-    const productTypes = ['t-shirt', 'shirt', 'dress', 'clothes', 'food', 'formula', 'diaper', 'toy'];
     
-    const hasProductKeyword = productKeywords.some(keyword => lowerMessage.includes(keyword));
-    const hasFilterKeyword = filterKeywords.some(keyword => lowerMessage.includes(keyword));
-    const hasProductType = productTypes.some(type => lowerMessage.includes(type));
+    // Strong indicators of product search intent
+    const strongProductKeywords = ['buy', 'order', 'purchase', 'find me', 'show me', 'get me', 'search for', 'looking for', 'want to buy', 'need to buy'];
+    const shoppingFilters = ['price', 'rating', 'budget', 'cost', 'rs', '₹', 'under', 'above', 'below'];
     
-    if (hasProductKeyword || hasFilterKeyword || hasProductType) {
+    // Question words that indicate informational queries (not shopping)
+    const questionWords = ['how', 'what', 'why', 'when', 'where', 'which', 'should', 'can', 'is', 'are', 'do', 'does', 'tips', 'advice', 'help', 'guide'];
+    
+    // Check if it's clearly a shopping intent
+    const hasStrongProductKeyword = strongProductKeywords.some(keyword => lowerMessage.includes(keyword));
+    const hasShoppingFilter = shoppingFilters.some(filter => lowerMessage.includes(filter));
+    const hasQuestionWord = questionWords.some(word => lowerMessage.includes(word));
+    
+    // If it has question words, it's likely an informational query, not product search
+    if (hasQuestionWord && !hasStrongProductKeyword) {
+      // Let AI handle the question
+    } else if (hasStrongProductKeyword || hasShoppingFilter) {
       return "PRODUCT_SEARCH_NEEDED";
+    } else {
+      // Check for implicit product search (less aggressive)
+      const productTypes = ['t-shirt', 'shirt', 'dress', 'clothes', 'food', 'formula', 'toy'];
+      const hasProductType = productTypes.some(type => lowerMessage.includes(type));
+      
+      // Only trigger product search if it's clearly about wanting/needing products
+      if (hasProductType && (lowerMessage.includes('want') || lowerMessage.includes('need') || lowerMessage.includes('looking'))) {
+        return "PRODUCT_SEARCH_NEEDED";
+      }
     }
 
-    // Always try to use Groq API for all questions
+    // Always try to use Groq API for all other questions
     try {
       const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       console.log('API Key exists:', !!apiKey);
@@ -261,7 +304,7 @@ const extractKeywords = (text: string): string[] => {
         messages: [
           {
             role: "system",
-            content: `You are a helpful baby care assistant, made for FirstCry. You specialize in:
+            content: `You are a helpful baby care assistant, made for FirstCry. You're built by Team Bhai Ki Pull Request for the InnovateX Hackathon. You specialize in:
             - Baby feeding, nutrition, and formula advice
             - Sleep schedules and sleep training
             - Baby development milestones

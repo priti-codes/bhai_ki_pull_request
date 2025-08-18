@@ -10,6 +10,8 @@ interface DraggableSectionProps {
   tagline: string;
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
   onAddToCart?: (product: Product) => void;
+  activeRecommendationId?: string | null;
+  onRecommendationToggle?: (productId: string, show: boolean) => void;
 }
 
 export function DraggableSection({ 
@@ -18,12 +20,14 @@ export function DraggableSection({
   color, 
   tagline, 
   dragHandleProps,
-  onAddToCart 
+  onAddToCart,
+  activeRecommendationId,
+  onRecommendationToggle
 }: DraggableSectionProps) {
   return (
     <motion.div
       layout
-      className="bg-card rounded-2xl p-6 shadow-card hover:shadow-soft transition-all duration-300"
+      className="bg-card rounded-2xl p-6 shadow-card hover:shadow-soft transition-all duration-300 overflow-visible"
     >
       {/* Section Header */}
       <div className="flex items-center gap-4 mb-6">
@@ -44,12 +48,14 @@ export function DraggableSection({
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-visible">
         {products.map((product) => (
           <ProductCard 
             key={product.id} 
             product={product} 
             onAddToCart={onAddToCart}
+            showRecommendations={activeRecommendationId === product.id}
+            onRecommendationToggle={onRecommendationToggle}
           />
         ))}
       </div>

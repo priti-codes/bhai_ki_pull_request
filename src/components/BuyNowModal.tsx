@@ -199,7 +199,7 @@ export function BuyNowModal({ product, isOpen, onClose }: BuyNowModalProps) {
                     <div className="flex items-center gap-2">
                       <RefreshCw className="w-4 h-4 text-purple-600" />
                       <Label htmlFor="subscription-toggle" className="text-sm font-medium">
-                        Auto-Buy Subscription
+                        Subscribe and Save
                       </Label>
                       <Badge variant="secondary" className="text-xs">
                         Save up to 12%
