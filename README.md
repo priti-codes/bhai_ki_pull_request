@@ -151,11 +151,11 @@ FirstCry AI is a modern, intelligent e-commerce platform designed specifically f
 ```
 
 ### Voice Search Examples
-- "Show me strollers under 5000"
-- "Find baby food for 8 months"
-- "Diapers size medium best rated"
+- "Diaper"
+- "Food"
+- "Horlicks"
 
-### Smart Filtering System
+### Smart Filtering System through chatbot
 - **Age Ranges**: 0-6m, 6-12m, 1-2y, 2-5y, 5-8y
 - **Price Filters**: ₹100 - ₹10,000+ with smart suggestions
 - **Rating System**: 1-5 stars with review counts
@@ -233,19 +233,19 @@ src/
       <a href="https://github.com/Sambit-Mondal">🚀 Team Lead & Full-Stack</a>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/100x100/4338ca/ffffff?text=AR" width="100px;" alt="Adarsh Rout"/><br>
+      <img src="https://github.com/AdarshRout.png" width="100px;" alt="Adarsh Rout"/><br>
       <sub><b>Adarsh Rout</b></sub><br>
-      <span>🎨 UI/UX & Frontend</span>
+      <span>💾 AI Integration</span>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/100x100/7c3aed/ffffff?text=PB" width="100px;" alt="Priti Barman"/><br>
+      <img src="https://github.com/priti-codes.png" width="100px;" alt="Priti Barman"/><br>
       <sub><b>Priti Barman</b></sub><br>
-      <span>💾 Backend & Database</span>
+      <span>💾 Design and Presentation</span>
     </td>
     <td align="center">
       <img src="https://via.placeholder.com/100x100/dc2626/ffffff?text=TB" width="100px;" alt="Tamoghna Bhattacharyya"/><br>
       <sub><b>Tamoghna Bhattacharyya</b></sub><br>
-      <span>🤖 AI Integration & Logic</span>
+      <span>💡 Business Strategy and Planning</span>
     </td>
   </tr>
 </table>
@@ -253,9 +253,8 @@ src/
 ## 🏆 Hackathon Details
 
 **Event**: InnovateX Hackathon  
-**Organizer**: FED KIIT (Forum for Engineering Development, KIIT)  
-**Team**: Bhai Ki Pull Request  
-**Category**: AI-Powered E-commerce Solutions  
+**Organizer**: FED KIIT (Federation of Entrepreneurship Development, KIIT)  
+**Team**: Bhai Ki Pull Request
 
 ## 📄 License
 
