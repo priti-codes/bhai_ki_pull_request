@@ -229,18 +229,18 @@ src/
   <tr>
     <td align="center">
       <img src="https://github.com/Sambit-Mondal.png" width="100px;" alt="Sambit Mondal"/><br>
-      <sub><b>Sambit Mondal</b></sub><br>
-      <a href="https://github.com/Sambit-Mondal">🚀 Team Lead & Full-Stack</a>
+      <sub><b><a href="https://github.com/Sambit-Mondal">Sambit Mondal</a></b></sub><br>
+      <span>🚀 Team Lead & Full-Stack</span>
     </td>
     <td align="center">
       <img src="https://github.com/AdarshRout.png" width="100px;" alt="Adarsh Rout"/><br>
-      <sub><b>Adarsh Rout</b></sub><br>
+      <sub><b><a href="https://github.com/AdarshRout">Adarsh Rout</a></b></sub><br>
       <span>💾 AI Integration</span>
     </td>
     <td align="center">
       <img src="https://github.com/priti-codes.png" width="100px;" alt="Priti Barman"/><br>
-      <sub><b>Priti Barman</b></sub><br>
-      <span>💾 Design and Presentation</span>
+      <sub><b><a href="https://github.com/priti-codes">Priti Barman</a></b></sub><br>
+      <span>🖌️ Design and Presentation</span>
     </td>
     <td align="center">
       <img src="https://via.placeholder.com/100x100/dc2626/ffffff?text=TB" width="100px;" alt="Tamoghna Bhattacharyya"/><br>
