@@ -167,7 +167,7 @@ export function CartPage() {
 
   if (groupedItems.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background w-full overflow-hidden">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
@@ -216,7 +216,7 @@ export function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full overflow-hidden">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

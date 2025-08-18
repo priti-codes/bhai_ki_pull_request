@@ -25,14 +25,41 @@ export function ProductCard({
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [modalPosition, setModalPosition] = useState({ alignment: 'left-1/2', transform: 'translateX(-50%)' });
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showRecommendations) {
       const recs = getRecommendations(product, 4);
       setRecommendations(recs);
+      
+      // Recalculate modal position when showing recommendations
+      const newPosition = getModalPosition();
+      setModalPosition(newPosition);
     }
   }, [showRecommendations, product]);
+
+  // Calculate modal position based on card position on screen
+  const getModalPosition = () => {
+    if (!cardRef.current) return { alignment: 'left-1/2', transform: 'translateX(-50%)' };
+    
+    const rect = cardRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const cardCenter = rect.left + rect.width / 2;
+    
+    // If card is in the left third of screen, align modal to the right edge of card
+    if (cardCenter < viewportWidth / 3) {
+      return { alignment: 'left-0', transform: 'translateX(0)' };
+    }
+    // If card is in the right third of screen, align modal to the left edge of card
+    else if (cardCenter > (2 * viewportWidth) / 3) {
+      return { alignment: 'right-0', transform: 'translateX(0)' };
+    }
+    // For center cards, keep centered
+    else {
+      return { alignment: 'left-1/2', transform: 'translateX(-50%)' };
+    }
+  };
 
   const handleAddToCart = async () => {
     setIsLoading(true);
@@ -58,19 +85,24 @@ export function ProductCard({
     <>
       <motion.div
         ref={cardRef}
-        whileHover={{ y: -4, scale: 1.02 }}
+        whileHover={showRecommendations ? {} : { y: -4, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.2 }}
         className="relative"
+        style={{ 
+          pointerEvents: showRecommendations ? 'none' : 'auto' 
+        }}
       >
-        <Card className="group overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 border-0 bg-card">
+        <Card className={`overflow-hidden shadow-card transition-all duration-300 border-0 bg-card ${
+          showRecommendations ? '' : 'group hover:shadow-soft'
+        }`}>
           <div className="relative overflow-hidden">
             <img
               src={product.image}
               alt={product.name}
-              className={`w-full object-cover transition-transform duration-300 group-hover:scale-105 ${
-                compact ? 'h-32' : 'h-48'
-              }`}
+              className={`w-full object-cover transition-transform duration-300 ${
+                showRecommendations ? '' : 'group-hover:scale-105'
+              } ${compact ? 'h-32' : 'h-48'}`}
             />
             {product.badge && (
               <Badge 
@@ -169,81 +201,145 @@ export function ProductCard({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="absolute top-full z-[60] mt-4 pointer-events-auto"
-              style={{
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '100vw',
-                maxWidth: '1200px'
+              className={`absolute top-full z-[90] mt-4 ${modalPosition.alignment} pointer-events-auto`}
+              // style={{
+              //   transform: modalPosition.transform,
+              //   width: 'min(500px, calc(100vw - 32px))',
+              //   maxWidth: '500px'
+              // }}
+              onMouseEnter={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseMove={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseOut={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
               }}
             >
-              <div className="mx-4 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-6 shadow-2xl backdrop-blur-sm">
+              <div 
+                className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4 shadow-2xl backdrop-blur-sm pointer-events-auto"
+                style={{ 
+                  aspectRatio: '1', 
+                  minHeight: '480px', 
+                  maxHeight: '480px',
+                  position: 'relative',
+                  zIndex: 91
+                }}
+                onMouseEnter={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onMouseLeave={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onMouseMove={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onMouseOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onMouseOut={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
                 {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-orange-100 p-2 rounded-full">
-                      <Sparkles className="w-5 h-5 text-orange-600" />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-orange-100 p-1.5 rounded-full">
+                      <Sparkles className="w-4 h-4 text-orange-600" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-orange-900">
+                      <h4 className="text-base font-semibold text-orange-900 line-clamp-1">
                         Perfect with "{product.name}"
                       </h4>
-                      <p className="text-sm text-orange-700">
-                        Frequently bought together by other parents
+                      <p className="text-xs text-orange-700">
+                        Frequently bought together
                       </p>
                     </div>
                   </div>
                   <button
-                    onClick={() => onRecommendationToggle?.(product.id, false)}
-                    className="text-orange-400 hover:text-orange-600 transition-colors p-2 hover:bg-orange-100 rounded-full flex-shrink-0"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onRecommendationToggle?.(product.id, false);
+                    }}
+                    className="text-orange-400 hover:text-orange-600 transition-colors p-1.5 hover:bg-orange-100 rounded-full flex-shrink-0"
                     aria-label="Close recommendations"
                   >
-                    <X size={20} />
+                    <X size={16} />
                   </button>
                 </div>
 
-                {/* Recommendations Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Recommendations Grid - 2x2 layout */}
+                <div className="grid grid-cols-2 gap-2 flex-1">
                   {recommendations.slice(0, 4).map((rec, index) => (
                     <motion.div
                       key={rec.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white rounded-lg p-4 shadow-sm border border-orange-100 hover:shadow-md transition-shadow"
+                      className="bg-white rounded-lg p-3 shadow-sm border border-orange-100 hover:shadow-md transition-shadow flex flex-col"
+                      onMouseEnter={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onMouseLeave={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
                     >
-                      <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-2 h-full">
                         <img
                           src={rec.image}
                           alt={rec.name}
-                          className="w-full h-24 object-cover rounded-md"
+                          className="w-full h-20 object-cover rounded-md"
                         />
-                        <div className="flex-1">
-                          <h5 className="text-sm font-medium text-gray-900 line-clamp-2 leading-tight mb-2">
-                            {rec.name}
-                          </h5>
-                          <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-sm font-bold text-primary">
-                              ₹{rec.price}
-                            </span>
-                            {rec.rating && (
-                              <div className="flex items-center">
-                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                <span className="text-xs text-gray-500 ml-1">
-                                  {rec.rating}
-                                </span>
-                              </div>
-                            )}
+                        <div className="flex-1 flex flex-col justify-between">
+                          <div>
+                            <h5 className="text-xs font-medium text-gray-900 line-clamp-2 leading-tight mb-1">
+                              {rec.name}
+                            </h5>
+                            <div className="flex items-center justify-between gap-1 mb-2">
+                              <span className="text-xs font-bold text-primary">
+                                ₹{rec.price}
+                              </span>
+                              {rec.rating && (
+                                <div className="flex items-center">
+                                  <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                                  <span className="text-[10px] text-gray-500 ml-0.5">
+                                    {rec.rating}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                           <Button
                             size="sm"
-                            className="w-full text-xs bg-primary hover:bg-primary/90"
-                            onClick={() => {
+                            className="w-full text-[10px] bg-primary hover:bg-primary/90 mt-auto py-1 h-6"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               onAddToCart?.(rec);
                               onRecommendationToggle?.(product.id, false);
                             }}
                           >
-                            <ShoppingCart className="w-3 h-3 mr-1" />
+                            <ShoppingCart className="w-2.5 h-2.5 mr-1" />
                             Add to Cart
                           </Button>
                         </div>
@@ -253,9 +349,9 @@ export function ProductCard({
                 </div>
 
                 {/* Footer */}
-                <div className="mt-4 text-center">
-                  <p className="text-sm text-orange-600 font-medium">
-                    💡 Bundle these items together for additional discounts
+                <div className="mt-3 text-center">
+                  <p className="text-xs text-orange-600 font-medium">
+                    💡 Bundle for extra discounts
                   </p>
                 </div>
               </div>

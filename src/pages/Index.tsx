@@ -71,7 +71,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full overflow-hidden">
       <Header onSearch={handleSearch} cartCount={cartCount} />
       
       <main className="container mx-auto px-4 py-8">
