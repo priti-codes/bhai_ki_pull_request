@@ -45,7 +45,6 @@ FirstCry AI is a modern, intelligent e-commerce platform designed specifically f
 ### 🎨 Modern UI/UX
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Smooth Animations**: Framer Motion for delightful interactions
-- **Dark/Light Mode**: Theme switching support
 - **Accessibility**: WCAG compliant design principles
 
 ### 🧠 Intelligent Features
