@@ -242,8 +242,8 @@ src/
       <span>🖌️ Design and Presentation</span>
     </td>
     <td align="center">
-      <img src="https://via.placeholder.com/100x100/dc2626/ffffff?text=TB" width="100px;" alt="Tamoghna Bhattacharyya"/><br>
-      <sub><b>Tamoghna Bhattacharyya</b></sub><br>
+      <img src="https://github.com/tamoghnabhattacharyyas-tech.png" width="100px;" alt="Tamoghna Bhattacharyya"/><br>
+      <sub><b><a href="https://github.com/tamoghnabhattacharyyas-tech">Tamoghna Bhattacharyya</a></b></sub><br>
       <span>💡 Business Strategy and Planning</span>
     </td>
   </tr>
